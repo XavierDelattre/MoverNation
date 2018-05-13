@@ -6,10 +6,12 @@ const sequelize = require('sequelize')
 const app = express()
 const data = require('./dummy-data')
 
-app.engine('hbs', expressHandlebars({
+app.engine('.hbs', expressHandlebars({
 defaultLayout: 'layout',
 extname: '.hbs'
 }))
+app.use("/assets", express.static(__dirname + '/assets'));
+
 
 app.get('/', function(request, response){
 	response.render("index.hbs")
