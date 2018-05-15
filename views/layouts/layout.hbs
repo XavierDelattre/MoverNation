@@ -36,13 +36,13 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="about">
+                <a class="nav-link" href="contact">
                   About us
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="accounts">
-                    <button class="btn btn-danger btn-round">Register/Login</button>
+                <a class="nav-link" href="login">
+                    <button class="btn btn-danger btn-round btn-sm">Login/Register</button>
                 </a>
               </li>
             </ul>
@@ -56,7 +56,7 @@
     <div class="container">
       <div class="copyright float-right">
         Made with <i class="material-icons">favorite</i> by
-        <a href="https://github.com/XavierDelattre/MoverNation" target="_blank">Xavier Delattre</a>
+        <a href="https://github.com/XavierDelattre" target="_blank">Xavier Delattre</a>
       </div>
     </div>
   </footer>
@@ -89,6 +89,23 @@
 
     <!-- Material Kit Core initialisations of plugins and Bootstrap Material Design Library -->
     <script src="/assets/js/material-kit.js?v=2.0.3"></script>
+
+    <script type="text/javascript">
+  $('#birthpicker').datetimepicker({
+    icons: {
+      time: "fa fa-clock-o",
+      date: "fa fa-calendar",
+      up: "fa fa-chevron-up",
+      down: "fa fa-chevron-down",
+      previous: 'fa fa-chevron-left',
+      next: 'fa fa-chevron-right',
+      today: 'fa fa-screenshot',
+      clear: 'fa fa-trash',
+      close: 'fa fa-remove'
+      },
+    format: 'DD/MM/YYYY'
+  });
+</script>
 
   </body>
 </html>

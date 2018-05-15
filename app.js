@@ -25,6 +25,14 @@ app.get('/contact', function(request, response){
 	response.render("contact.hbs")
 })
 
+app.get('/login', function(request, response){
+	response.render("login.hbs")
+})
+
+app.get('/register', function(request, response){
+	response.render("register.hbs")
+})
+
 app.get('/accounts', function(request, response){
 	response.render(data.accounts)
 })
