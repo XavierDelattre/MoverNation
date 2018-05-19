@@ -1,3 +1,5 @@
+process.env.NODE_ENV === "production"
+
 const express = require('express');
 const expressHandlebars = require('express-handlebars');
 const	bodyParser = require('body-parser');
@@ -23,9 +25,6 @@ app.use(session({
     resave: false,
     proxy: true,
     saveUninitialized: false,
-    cookie: {
-        expires: 600000
-    }
 }));
 app.use((req, res, next) => {
     if (req.cookies.movernation_sid && !req.session.user) {
@@ -34,29 +33,37 @@ app.use((req, res, next) => {
     next();
 });
 
-var sessionChecker = (req, res, next) => {
-    if (req.session.user && req.cookies.user_sid) {
-        console.log("User connected");
-    } else {
-        next();
-    }    
-};
 
 
-app.get('/', sessionChecker, (req, res) => {
-	res.render("index.hbs");
+app.get('/', (req, res) => {
+	if (req.cookies.movernation_sid && req.session.user){
+		var username = req.session.user.username;
+		res.render("index.hbs", {username: username});
+	}
+	else
+		res.render("index.hbs");
 });
 
 app.get('/about', function(req, res){
-	res.render("about.hbs");
+		if (req.cookies.movernation_sid && req.session.user){
+		var username = req.session.user.username;
+		res.render("about.hbs", {username: username});
+	}
+	else
+		res.render("about.hbs")
 });
 
 app.get('/contact', function(req, res){
-	res.render("contact.hbs");
+	if (req.cookies.movernation_sid && req.session.user){
+		var username = req.session.user.username;
+		res.render("contact.hbs", {username: username});
+	}
+	else
+		res.render("contact.hbs")
 });
 
 app.route('/register')
-		.get(sessionChecker, (req, res) => {
+		.get((req, res) => {
 			res.render("register.hbs");
 		})
 		.post((req, res) => {
@@ -69,7 +76,7 @@ app.route('/register')
 			})
 			.then(user => {
 				req.session.user = user.dataValues;
-				res.render("index.hbs");
+				res.redirect("/");
 			})
 			.catch(err => {
 				console.log(err);
@@ -78,7 +85,7 @@ app.route('/register')
 		});
 
 app.route('/login')
-		.get(sessionChecker, (req, res) => {
+		.get((req, res) => {
 			res.render("login.hbs");
 		})
 		.post((req, res) => {
@@ -96,17 +103,26 @@ app.route('/login')
 				} 
 				else {
 					req.session.user = user.dataValues;
-					res.render("index.hbs");
+					res.redirect("/");
 				}
-			})
-		})
+			});
+		});
 
 app.get('/accounts', function(req, res){
-	res.render(data.accounts)
+	var username = req.session.user.username;
+	res.render("accounts.hbs", {username: username, p_account: 1});
 });
 
 app.get('/accounts/:id', function(req, res){
 	const id = req.params.id
+});
+
+app.get('/logout', function(req, res){
+  req.session.destroy(function(err){
+  	if (err)
+  		console.log(err);
+  });
+	res.redirect("/");
 });
 
 app.listen(8080);

@@ -16,7 +16,11 @@
     <link rel="stylesheet" href="/assets/css/material-kit.css?v=2.0.3">
 
   </head>
+  {{#if p_account}}
+  <body class="profile-page sidebar-collapse">
+  {{else}}
   <body>
+  {{/if}}
     <nav class="navbar navbar-transparent navbar-color-on-scroll fixed-top navbar-expand-lg" color-on-scroll="100" id="sectionsNav">
         <div class="container">
           <div class="navbar-translate">
@@ -40,11 +44,22 @@
                   About us
                 </a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link" href="login">
+              {{#if username}}
+                <li class="dropdown nav-item">
+                  <button class="btn btn-primary btn-round btn-sm dropdown-toggle" data-toggle="dropdown">{{{username}}}</button>
+                  <div class="dropdown-menu dropdown-with-icons">
+                    <a href="/accounts" class="dropdown-item">
+                      <i class="material-icons">person</i>My account</a>
+                    <a href="/logout" class="dropdown-item"><i class="material-icons">power_settings_new</i>Log out</a>
+                  </div>
+                </li>
+              {{else}}
+                <li class="nav-item">
+                  <a class="nav-link" href="login">
                     <button class="btn btn-danger btn-round btn-sm">Login/Register</button>
-                </a>
-              </li>
+                  </a>
+                </li>
+              {{/if}}
             </ul>
           </div>
         </div>
