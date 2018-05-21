@@ -11,8 +11,11 @@
 							<img src="/assets/img/faces/avatar_default.png" alt="Circle Image" class="img-raised rounded-circle img-fluid">
 						</div>
 						<div class="name">
-							<h3 class="title">{{{username}}}
-							</h3>
+							{{#if notSelf}}
+							<h3 class="title">{{{notUsername}}}</3>
+							{{else}}
+							<h3 class="title">{{{username}}}</h3>
+							{{/if}}
 						</div>
 					</div>
 				</div>
@@ -21,6 +24,24 @@
 				<p>A description of a user.</p>
 			</div>
 			<div class="row">
+				{{#if notSelf}}
+				<div class="col-md-10 ml-auto mr-auto">
+					<br><br>
+					<ul class="nav nav-pills nav-pills-rose justify-content-center">
+  						<li class="nav-item"><a class="nav-link active" href="#pill2" data-toggle="tab">Weekly stats</a></li>
+  						<li class="nav-item"><a class="nav-link" href="#pill3" data-toggle="tab">All the stats</a></li>
+  						<li class="nav-item"><a class="nav-link" href="/accounts">Community</a></li>
+					</ul>
+					<div class="tab-content tab-space">
+						<div class="tab-pane active" id="pill2">
+							{{notUsername}} weekly stats:
+						</div>
+						<div class="tab-pane" id="pill3">
+							All {{notUsername}} stats.
+						</div>
+					</div>
+				</div>
+				{{else}}
 				<div class="col-md-10 ml-auto mr-auto">
 					<br><br>
 					<ul class="nav nav-pills nav-pills-rose justify-content-center">
@@ -45,11 +66,58 @@
 							My weekly stats:
 						</div>
 						<div class="tab-pane" id="pill3">
-							All my stats.
+							<div class="row">
+								<div class="col-md-5 ml-auto mr-auto">
+									<h4 class="text-center">Activities</h4>
+									{{#if listAct}}
+									<table class="table">
+			            	<thead>
+			            		<tr>
+			            			<th class="text-center">Start</th>
+			            			<th class="text-center">Stop</th>
+			            			<th>Description</th>
+			            		</tr>
+			            	</thead>
+			            	<tbody>
+			            		{{#each listAct}}
+			            		<tr>
+			            			<th class="text-center">{{this.start}}</th>
+			            			<th class="text-center">{{this.end}}</th>
+			            			<th>{{this.description}}</th>
+			            		</tr>
+			            		{{/each}}
+			            	</tbody>
+			            </table>
+			            {{else}}
+			            <h5 class="text-center">No activities yet.</h5>
+			            {{/if}}
+								</div>
+								<div class="col-md-5 ml-auto mr-auto">
+									<h4 class="text-center">Weight</h4>
+									{{#if listWeight}}
+		          		<table class="table">
+		          			<thead>
+		          				<th class="text-center">Date</th>
+		          				<th class="text-center">Weight(kg)</th>
+		          			</thead>
+		          			<tbody>
+		          				{{#each listWeight}}
+		          				<tr>
+		          					<th class="text-center">{{this.start}}</th>
+		          					<th class="text-center">{{this.kg}}</th>
+		          				</tr>
+		          				{{/each}}
+		          			</tbody>
+		          		</table>
+		          		{{else}}
+		          		<h5 class="text-center">No weights yet.</h5>
+		          		{{/if}}
+		          	</div>
+	          	</div>
 						</div>
-
 					</div>
 				</div>
+				{{/if}}
 			</div>
 			</div>
 		</div>

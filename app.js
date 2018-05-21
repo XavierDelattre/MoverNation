@@ -7,6 +7,7 @@ const sqlite3 = require('sqlite3');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const User = require('./models/user');
+const ActWeight = require('./models/actweight');
 
 const app = express();
 
@@ -33,7 +34,17 @@ app.use(function(req, res, next){
     next();
 });
 
-
+function dynamicSort(property) {
+  var sortOrder = 1;
+  if(property[0] === "-") {
+      sortOrder = -1;
+      property = property.substr(1);
+  }
+  return function (a,b) {
+      var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+      return result * sortOrder;
+  	}
+	};
 
 app.get('/', function(req, res){
 	if (req.cookies.movernation_sid && req.session.user){
@@ -111,19 +122,49 @@ app.route('/login')
 		});
 
 app.get('/accounts', function(req, res){
-	var username = req.session.user.username;
 	User.findAll({
 		attributes: ['id', 'username']
 	}).then(function(list){
-		console.log("000000000000\n", list[0], "\n0000000000");
+		var listUsers = [];
+		list.forEach(function(users){
+			listUsers.push(users.dataValues);
+		});
+		var username = req.session.user.username;
+
+		res.render("accounts.hbs", {username: username, user_id: req.session.user.id, listUsers: listUsers});
 	});
-	res.render("accounts.hbs", {username: username, user_id: req.session.user.id});
 });
 
 app.get('/accounts/:id', function(req, res){
-	const id = req.params.id
+	var id = req.params.id
 	var username = req.session.user.username;
-	res.render("account.hbs", {username: username, p_account: 1, user_id: req.session.user.id});
+	User.findOne({ where: {id: id}}).then(function(user){
+		if (req.session.user.id == id){
+			ActWeight.findAll({where: {username: username}}).then(function(actweight){
+				var listActWeight = [];
+				actweight.forEach(function(act){
+					listActWeight.push(act.dataValues);
+				});
+				// listActWeight.sort(dynamicSort("-start"));
+				var listAct = [];
+				var listWeight = [];
+
+				listActWeight.forEach(function(element){
+					if (element.activity == true)
+						listAct.push(element);
+					else
+						listWeight.push(element);
+				});
+				// console.log("1111111111\n", listAct, "\n111111111");
+				// console.log("2222222222\n", listWeight, "\n222222222");
+				listAct.sort(dynamicSort("-start"));
+				listWeight.sort(dynamicSort("-start"));
+				res.render("account.hbs", {username: username, p_account: 1, user_id: req.session.user.id, listAct: listAct, listWeight: listWeight});
+			});
+		}
+		else
+			res.render("account.hbs", {username: username, p_account: 1, user_id: req.session.user.id, notSelf: 1, notUsername: user.dataValues.username});
+	});
 });
 
 app.get('/logout', function(req, res){
