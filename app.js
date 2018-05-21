@@ -26,7 +26,7 @@ app.use(session({
     proxy: true,
     saveUninitialized: false,
 }));
-app.use((req, res, next) => {
+app.use(function(req, res, next){
     if (req.cookies.movernation_sid && !req.session.user) {
         res.clearCookie('movernation_sid');        
     }
@@ -35,10 +35,11 @@ app.use((req, res, next) => {
 
 
 
-app.get('/', (req, res) => {
+app.get('/', function(req, res){
 	if (req.cookies.movernation_sid && req.session.user){
+		console.log("111111111111\n", req.session.user, "\n11111111111");
 		var username = req.session.user.username;
-		res.render("index.hbs", {username: username});
+		res.render("index.hbs", {username: username, user_id: req.session.user.id});
 	}
 	else
 		res.render("index.hbs");
@@ -47,26 +48,26 @@ app.get('/', (req, res) => {
 app.get('/about', function(req, res){
 		if (req.cookies.movernation_sid && req.session.user){
 		var username = req.session.user.username;
-		res.render("about.hbs", {username: username});
+		res.render("about.hbs", {username: username, user_id: req.session.user.id});
 	}
 	else
-		res.render("about.hbs")
-});
+		res.render("about.hbs");
+;});
 
 app.get('/contact', function(req, res){
 	if (req.cookies.movernation_sid && req.session.user){
 		var username = req.session.user.username;
-		res.render("contact.hbs", {username: username});
+		res.render("contact.hbs", {username: username, user_id: req.session.user.id});
 	}
 	else
 		res.render("contact.hbs")
 });
 
 app.route('/register')
-		.get((req, res) => {
+		.get(function (req, res){
 			res.render("register.hbs");
 		})
-		.post((req, res) => {
+		.post(function(req, res){
 			User.create({
 				username: req.body.username,
 				password: req.body.password,
@@ -80,41 +81,49 @@ app.route('/register')
 			})
 			.catch(err => {
 				console.log(err);
-				res.render("register.hbs");
+				if (err.fields[0] == "username")
+					res.render("register.hbs", {alert: "Username already taken"});
+				else if (err.fields[0] == "email")
+					res.render("register.hbs", {alert: "Email already taken"});
+				else
+					res.render("register.hbs", {alert: "Something went wrong. Make sure that all the fields are complete"});
 			});
 		});
 
 app.route('/login')
-		.get((req, res) => {
+		.get(function(req, res){
 			res.render("login.hbs");
 		})
-		.post((req, res) => {
+		.post(function(req, res){
 			var username = req.body.username,
 					password = req.body.password;
 
-			User.findOne({ where: { username: username} }).then(function (user){
-				if (!user){
-					console.log("No user found with this username.");
-					res.render("login.hbs");
-				} 
-				else if (!user.validPassword(password)) {
-					console.log("The password is incorrect.");
-					res.render("login.hbs");
-				} 
+			User.findOne({where: {username: username}}).then(function(user){
+				if (!user)
+					res.render("login.hbs", {alert: "No user found with this unsername"});
+				else if (!user.validPassword(password))
+					res.render("login.hbs", {alert: "Password is incorrect"});
 				else {
 					req.session.user = user.dataValues;
-					res.redirect("/");
+					res.redirect("/accounts/" + req.session.user.id);
 				}
 			});
 		});
 
 app.get('/accounts', function(req, res){
 	var username = req.session.user.username;
-	res.render("accounts.hbs", {username: username, p_account: 1});
+	User.findAll({
+		attributes: ['id', 'username']
+	}).then(function(list){
+		console.log("000000000000\n", list[0], "\n0000000000");
+	});
+	res.render("accounts.hbs", {username: username, user_id: req.session.user.id});
 });
 
 app.get('/accounts/:id', function(req, res){
 	const id = req.params.id
+	var username = req.session.user.username;
+	res.render("account.hbs", {username: username, p_account: 1, user_id: req.session.user.id});
 });
 
 app.get('/logout', function(req, res){

@@ -1,5 +1,17 @@
 <div class="page-header header-filter" filter-color="purple" style="background-image: url('/assets/img/bg.jpg')">
 	<div class="container">
+    {{#if alert}}
+    <div class="row">
+      <div class="col-md-10 ml-auto mr-auto">
+          <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+            {{alert}}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+      </div>
+    </div>
+    {{/if}}
 		<div class="row">
 			<div class="col-md-10 ml-auto mr-auto">
 				<div class="card card-signin">
@@ -7,7 +19,7 @@
 					<div class="card-body">
 						<form class="form" method="post" action="">
               <div class="row">
-                <div class="col-md-5 ml-auto">
+                <div class="col-md-5 ml-auto mr-auto">
                   <div class="form-group">
                     <div class="input-group">
                       <div class="input-group-prepend">
@@ -15,7 +27,17 @@
                           <i class="material-icons">person</i>
                         </span>
                       </div>
-                      <input name="username" type="text" class="form-control" placeholder="Username">
+                      <input name="username" type="text" class="form-control" maxlength="64" placeholder="Username">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">
+                          <i class="material-icons">mail</i>
+                        </span>
+                      </div>
+                      <input name="email" type="email" class="form-control" maxlength="64" placeholder="Email">
                     </div>
                   </div>
                   <div class="form-group">
@@ -25,7 +47,7 @@
                           <i class="material-icons">lock_outline</i>
                         </span>
                       </div>
-                      <input type="password" class="form-control" placeholder="Password">
+                      <input name="password" type="password" class="form-control" autocomplete="off" minlength="8" maxlength="64" placeholder="Password">
                     </div>
                   </div>
   								<div class="form-group">
@@ -35,32 +57,10 @@
                           <i class="material-icons">place</i>
                         </span>
                       </div>
-                      <input name="city" type="text" class="form-control" placeholder="City you live in">
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-5 mr-auto">
-  								<div class="form-group">
-                    <div class="input-group">
-                      <div class="input-group-prepend">
-                        <span class="input-group-text">
-                          <i class="material-icons">mail</i>
-                        </span>
-                      </div>
-                      <input name="email" type="email" class="form-control" placeholder="Email">
+                      <input name="city" type="text" class="form-control" maxlength="64" placeholder="City you live in">
                     </div>
                   </div>
                   <div class="form-group">
-                    <div class="input-group">
-                      <div class="input-group-prepend">
-                        <span class="input-group-text">
-                          <i class="material-icons">lock_outline</i>
-                        </span>
-                      </div>
-                      <input name="password" type="password" class="form-control" placeholder="Confirm password">
-                    </div>
-                  </div>
-                    <div class="form-group">
                       <div class="input-group">
                         <div class="input-group-prepend">
                           <span class="input-group-text">
@@ -71,7 +71,6 @@
                         <input name="birth" type="text" class="form-control datetimepicker" id="birthpicker"  placeholder="Birth date" />
                       </div>
                   </div>
-                    
                 </div>
               </div>
               <div class="text-center">

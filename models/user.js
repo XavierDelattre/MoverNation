@@ -8,10 +8,10 @@ var sequelize = new Sequelize('MoverNationDb', null, null, {
 
 sequelize
   .authenticate()
-  .then(() => {
+  .then(function(){
     console.log('Connection has been established successfully.');
   })
-  .catch(err => {
+  .catch(function(err){
     console.error('Unable to connect to the database:', err);
   });
 
