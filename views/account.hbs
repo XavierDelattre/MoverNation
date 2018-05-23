@@ -11,10 +11,10 @@
 							<img src="/assets/img/faces/avatar_default.png" alt="Circle Image" class="img-raised rounded-circle img-fluid">
 						</div>
 						<div class="name">
-							{{#if notSelf}}
-							<h3 class="title">{{{notUsername}}}</3>
+							{{#if currentUser}}
+							<h3 class="title">{{{username}}}</3>
 							{{else}}
-							<h3 class="title">{{{username}}}</h3>
+							<h3 class="title">{{{notUsername}}}</h3>
 							{{/if}}
 						</div>
 					</div>
@@ -24,52 +24,117 @@
 				<p>A description of a user.</p>
 			</div>
 			<div class="row">
-				{{#if notSelf}}
 				<div class="col-md-10 ml-auto mr-auto">
 					<br><br>
 					<ul class="nav nav-pills nav-pills-rose justify-content-center">
-  						<li class="nav-item"><a class="nav-link active" href="#pill2" data-toggle="tab">Weekly stats</a></li>
-  						<li class="nav-item"><a class="nav-link" href="#pill3" data-toggle="tab">All the stats</a></li>
-  						<li class="nav-item"><a class="nav-link" href="/accounts">Community</a></li>
-					</ul>
-					<div class="tab-content tab-space">
-						<div class="tab-pane active" id="pill2">
-							{{notUsername}} weekly stats:
-						</div>
-						<div class="tab-pane" id="pill3">
-							All {{notUsername}} stats.
-						</div>
-					</div>
-				</div>
-				{{else}}
-				<div class="col-md-10 ml-auto mr-auto">
-					<br><br>
-					<ul class="nav nav-pills nav-pills-rose justify-content-center">
+					{{#if currentUser}}
   						<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#pill1">New</a>
   							<div class="dropdown-menu">
   								<a class="dropdown-item" href="#pill1-activity" data-toggle="tab">Activity</a>
   								<a class="dropdown-item" href="#pill1-weight" data-toggle="tab">Weight</a>
 								</div>
   						</li>
-  						<li class="nav-item"><a class="nav-link active" href="#pill2" data-toggle="tab">Weekly stats</a></li>
-  						<li class="nav-item"><a class="nav-link" href="#pill3" data-toggle="tab">All my stats</a></li>
+  					{{/if}}
+  						<li class="nav-item"><a class="nav-link active" href="#pill2" data-toggle="tab">Activities</a></li>
+  						<li class="nav-item"><a class="nav-link" href="#pill3" data-toggle="tab">Weights</a></li>
   						<li class="nav-item"><a class="nav-link" href="/accounts">Community</a></li>
 					</ul>
 					<div class="tab-content tab-space">
+						{{#if currentUser}}
 						<div class="tab-pane" id="pill1-activity">
-							Start a new activity:
+							<form class="form" method="post" action="">
+								<h4 class="text-center"> Register a new activity</h4>
+								<div class="row">
+									<div class="col-md-5 ml-auto mr-auto">
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-prepend">
+													<span class="input-group-text">
+                          <i class="material-icons">alarm_add</i>
+                        	</span>
+												</div>
+												<input name="start" type="text" class="form-control datetimepicker" id="actpickerstart"  placeholder="Start time of the activity" required="required">
+											</div>
+										</div>
+									</div>
+									<div class="col-md-5 ml-auto mr-auto">
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-prepend">
+													<span class="input-group-text">
+                          <i class="material-icons">alarm_on</i>
+                        	</span>
+												</div>
+												<input name="end" type="text" class="form-control datetimepicker" id="actpickerend"  placeholder="End time of the activity" required="required">
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-8 ml-auto mr-auto">
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-prepend">
+													<span class="input-group-text">
+                          <i class="material-icons">speaker_notes</i>
+                        	</span>
+												</div>
+												<input name="description" type="text" class="form-control" maxlength="150" placeholder="Description (maximum 150 characters)" required="required">
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="text-center">
+                      <input type="submit" class="btn btn-rose btn-sm btn-round" value="Submit" required="required">
+                </div>
+							</form>
 						</div> 
 						<div class="tab-pane" id="pill1-weight">
-							Enter a new weight:
+							<form class="form" method="post" action="">
+								<h4 class="text-center"> Register a new weight</h4>
+								<div class="row">
+									<div class="col-md-5 ml-auto mr-auto">
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-prepend">
+													<span class="input-group-text">
+                          <i class="material-icons">alarm_add</i>
+                        	</span>
+												</div>
+												<input name="start" type="text" class="form-control datetimepicker" id="weightpicker"  placeholder="Start time of the activity" required="required">
+											</div>
+										</div>
+									</div>
+									<div class="col-md-5 ml-auto mr-auto">
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-prepend">
+													<span class="input-group-text">
+                          <i class="material-icons">timeline</i>
+                        	</span>
+												</div>
+												<input name="kg" type="number" class="form-control" maxlength="3" placeholder="Weight (in kg)" required="required">
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="text-center">
+                      <input type="submit" class="btn btn-rose btn-sm btn-round" value="Submit" required="required">
+                </div>
+							</form>
 						</div>
+						{{/if}}
 						<div class="tab-pane active" id="pill2">
-							My weekly stats:
-						</div>
-						<div class="tab-pane" id="pill3">
 							<div class="row">
-								<div class="col-md-5 ml-auto mr-auto">
-									<h4 class="text-center">Activities</h4>
+								<div class="col-md-10 ml-auto mr-auto">
+									<br>
 									{{#if listAct}}
+										{{#if currentUser}}
+									<h4 class="text-center">My past activities</h4>
+										{{else}}
+										<h4 class="text-center">{{notUsername}} past activities</h4>
+										{{/if}}
+									<br>
 									<table class="table">
 			            	<thead>
 			            		<tr>
@@ -89,12 +154,22 @@
 			            	</tbody>
 			            </table>
 			            {{else}}
-			            <h5 class="text-center">No activities yet.</h5>
+			            <h4 class="text-center">No activities entered yet</h4>
 			            {{/if}}
 								</div>
-								<div class="col-md-5 ml-auto mr-auto">
-									<h4 class="text-center">Weight</h4>
+							</div>
+						</div>
+						<div class="tab-pane" id="pill3">
+							<div class="row">
+								<div class="col-md-10 ml-auto mr-auto">
+									<br>
 									{{#if listWeight}}
+										{{#if currentUser}}
+									<h4 class="text-center">My past weights</h4>
+										{{else}}
+									<h4 class="text-center">{{notUsername}} past weights</h4>
+										{{/if}}
+									<br>
 		          		<table class="table">
 		          			<thead>
 		          				<th class="text-center">Date</th>
@@ -110,14 +185,14 @@
 		          			</tbody>
 		          		</table>
 		          		{{else}}
-		          		<h5 class="text-center">No weights yet.</h5>
+		          		<h4 class="text-center">No weights entered yet</h5>
 		          		{{/if}}
 		          	</div>
 	          	</div>
 						</div>
 					</div>
 				</div>
-				{{/if}}
+				{{!-- {{/if}} --}}
 			</div>
 			</div>
 		</div>

@@ -38,7 +38,7 @@ sequelize
 		allowNull: false
 	},
 	birth: {
-		type: Sequelize.STRING,
+		type: Sequelize.DATE,
 		allowNull: false
 	}
 });

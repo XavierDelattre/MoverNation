@@ -34,7 +34,8 @@ app.use(function(req, res, next){
     next();
 });
 
-function dynamicSort(property) {
+
+function dynamicSort(property){
   var sortOrder = 1;
   if(property[0] === "-") {
       sortOrder = -1;
@@ -135,37 +136,90 @@ app.get('/accounts', function(req, res){
 	});
 });
 
-app.get('/accounts/:id', function(req, res){
-	var id = req.params.id
-	var username = req.session.user.username;
-	User.findOne({ where: {id: id}}).then(function(user){
-		if (req.session.user.id == id){
-			ActWeight.findAll({where: {username: username}}).then(function(actweight){
-				var listActWeight = [];
-				actweight.forEach(function(act){
-					listActWeight.push(act.dataValues);
-				});
-				// listActWeight.sort(dynamicSort("-start"));
-				var listAct = [];
-				var listWeight = [];
 
-				listActWeight.forEach(function(element){
-					if (element.activity == true)
-						listAct.push(element);
-					else
-						listWeight.push(element);
-				});
-				// console.log("1111111111\n", listAct, "\n111111111");
-				// console.log("2222222222\n", listWeight, "\n222222222");
-				listAct.sort(dynamicSort("-start"));
-				listWeight.sort(dynamicSort("-start"));
-				res.render("account.hbs", {username: username, p_account: 1, user_id: req.session.user.id, listAct: listAct, listWeight: listWeight});
+app.route('/accounts/:id')
+		.get(function(req, res){
+			var id = req.params.id
+			var username = req.session.user.username;
+			User.findOne({ where: {id: id}}).then(function(user){
+				if (req.session.user.id == id){
+					ActWeight.findAll({where: {username: username}}).then(function(actweight){
+						var listActWeight = [];
+						actweight.forEach(function(act){
+							listActWeight.push(act.dataValues);
+						});
+						var listAct = [];
+						var listWeight = [];
+
+						listActWeight.forEach(function(element){
+							if (element.activity == true)
+								listAct.push(element);
+							else
+								listWeight.push(element);
+						});
+						listAct.sort(dynamicSort("-start"));
+						listWeight.sort(dynamicSort("-start"));
+						res.render("account.hbs", {username: username, p_account: 1, user_id: req.session.user.id, listAct: listAct, listWeight: listWeight, currentUser: 1});
+					});
+				}
+				else {
+					ActWeight.findAll({where: {username: user.dataValues.username}}).then(function(actweight){
+						var listActWeight = [];
+						actweight.forEach(function(act){
+							listActWeight.push(act.dataValues);
+						});
+						var listAct = [];
+						var listWeight = [];
+
+						listActWeight.forEach(function(element){
+							if (element.activity == true)
+								listAct.push(element);
+							else
+								listWeight.push(element);
+						});
+						listAct.sort(dynamicSort("-start"));
+						listWeight.sort(dynamicSort("-start"));
+						res.render("account.hbs", {username: username, p_account: 1, user_id: req.session.user.id, notUsername: user.dataValues.username, listAct: listAct, listWeight: listWeight});
+					});
+				}
 			});
-		}
-		else
-			res.render("account.hbs", {username: username, p_account: 1, user_id: req.session.user.id, notSelf: 1, notUsername: user.dataValues.username});
-	});
-});
+		})
+		.post(function(req, res){
+			if (req.body.description){
+				ActWeight.create({
+					username: req.session.user.username,
+					activity: true,
+					weight: false,
+					start: req.body.start,
+					end: req.body.end,
+					kg: null,
+					description: req.body.description
+				}).then(function(actweight){
+					console.log("Added");
+					res.redirect(req.session.user.id);
+				}).catch(function(err){
+					console.log(err);
+					res.redirect(req.session.user.id);
+				});
+			}
+			else {
+				ActWeight.create({
+					username: req.session.user.username,
+					activity: false,
+					weight: true,
+					start: req.body.start,
+					end: req.body.start,
+					kg: req.body.kg,
+					description: null
+				}).then(function(actweight){
+					console.log("Added");
+					res.redirect(req.session.user.id);
+				}).catch(function(err){
+					console.log(err);
+					res.redirect(req.session.user.id);
+				});
+			}
+		});
 
 app.get('/logout', function(req, res){
   req.session.destroy(function(err){
