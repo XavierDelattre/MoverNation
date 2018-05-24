@@ -49,7 +49,6 @@ function dynamicSort(property){
 
 app.get('/', function(req, res){
 	if (req.cookies.movernation_sid && req.session.user){
-		console.log("111111111111\n", req.session.user, "\n11111111111");
 		var username = req.session.user.username;
 		res.render("index.hbs", {username: username, user_id: req.session.user.id});
 	}
