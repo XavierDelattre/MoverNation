@@ -6,6 +6,7 @@ const	bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const jwt = require('jsonwebtoken');
 const User = require('./models/user');
 const ActWeight = require('./models/actweight');
 
@@ -227,5 +228,91 @@ app.get('/logout', function(req, res){
   });
 	res.redirect("/");
 });
+
+
+app.route('/tokens')
+		.post(function(req, res){
+			User.findOne({where: {username: req.body.username}}).then(function(user){
+				if (!user || !user.validPassword(req.body.password))
+					res.status(400).send({error: "invalid_grant"});
+				else {
+					var payload = {sub: user.dataValues.id, preffered_username: user.dataValues.username};
+					var token = jwt.sign(payload, "L48Ucp59vx4xJ7fhJ4fxw7Y3w3QA7RF81i646vAnVRkXH7j1hNkZMhSKS7P84cZs", { expiresIn: 86400});
+					res.status(200).send({access_token: token, token_type: "Bearer", id_token: payload});
+				}
+			});
+		});
+
+app.route('/weights')
+		.post(function(req, res) {
+			var token = req.headers.authorization;
+
+			if (!token)
+				res.status(401).send();
+			tokenSplit = token.split(" ");
+			token = tokenSplit[1];
+			jwt.verify(token, "L48Ucp59vx4xJ7fhJ4fxw7Y3w3QA7RF81i646vAnVRkXH7j1hNkZMhSKS7P84cZs", function(err, decoded){
+				if (err){
+					res.status(401).send();
+				}
+				else {
+					User.findOne({where: {id: req.body.userId}}).then(function(user){
+						if (!user)
+							res.status(400).send();
+						else {
+							ActWeight.create({
+								username: decoded.preffered_username,
+								activity: false,
+								weight: true,
+								start: req.body.time,
+								end: req.body.time,
+								kg: req.body.weight,
+								description: null
+							}).then(function(actweight){
+								res.status(204).send();
+							}).catch(function(err){
+								res.status(400).send();
+							});
+						}
+					});
+				}
+			});
+		});
+
+app.route('/training-activities')
+		.post(function(req, res){
+			var token = req.headers.authorization;
+
+			if (!token)
+				res.status(401).send();
+			tokenSplit = token.split(" ");
+			token = tokenSplit[1];
+			jwt.verify(token, "L48Ucp59vx4xJ7fhJ4fxw7Y3w3QA7RF81i646vAnVRkXH7j1hNkZMhSKS7P84cZs", function(err, decoded){
+				if (err){
+					res.status(401).send();
+				}
+				else {
+					User.findOne({where: {id: req.body.userId}}).then(function(user){
+						if (!user)
+							res.status(400).send();
+						else {
+							ActWeight.create({
+								username: decoded.preffered_username,
+								activity: true,
+								weight: false,
+								start: req.body.start,
+								end: req.body.stop,
+								kg: null,
+								description: req.body.description
+							}).then(function(actweight){
+								res.status(204).send();
+							}).catch(function(err){
+								res.status(400).send();
+							});
+						}
+					});
+				}
+			});
+		});
 
 app.listen(8080);
