@@ -236,7 +236,7 @@ app.route('/tokens')
 				if (!user || !user.validPassword(req.body.password))
 					res.status(400).send({error: "invalid_grant"});
 				else {
-					var payload = {sub: user.dataValues.id, preffered_username: user.dataValues.username};
+					var payload = {sub: user.dataValues.id, preferred_username: user.dataValues.username};
 					var token = jwt.sign(payload, "L48Ucp59vx4xJ7fhJ4fxw7Y3w3QA7RF81i646vAnVRkXH7j1hNkZMhSKS7P84cZs", { expiresIn: 86400});
 					res.status(200).send({access_token: token, token_type: "Bearer", id_token: payload});
 				}
@@ -261,7 +261,7 @@ app.route('/weights')
 							res.status(400).send();
 						else {
 							ActWeight.create({
-								username: decoded.preffered_username,
+								username: decoded.preferred_username,
 								activity: false,
 								weight: true,
 								start: req.body.time,
@@ -297,7 +297,7 @@ app.route('/training-activities')
 							res.status(400).send();
 						else {
 							ActWeight.create({
-								username: decoded.preffered_username,
+								username: decoded.preferred_username,
 								activity: true,
 								weight: false,
 								start: req.body.start,
